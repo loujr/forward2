@@ -1,0 +1,10 @@
+.bash_history
+.env
+.cache/
+.ssh/
+.local/
+.vscode*
+.__pycache__/*
+venv/
+webapp.sock
+urls.json
