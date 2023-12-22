@@ -10,7 +10,7 @@ from flask_restful import Resource, Api
 
 ### creating the flask app
 app = Flask(__name__, subdomain_matching=True)
-app.config["SERVER_NAME"] = "toolesbend.com"
+app.config["SERVER_NAME"] = os.getenv("SERVER_NAME", "default.com")
 api = Api(app)
 shortened_urls = {}
 
