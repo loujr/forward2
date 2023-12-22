@@ -1,8 +1,10 @@
 .bash_history
 .env
 .cache/
+.dotnet/
 .ssh/
 .local/
+.pytest_cache/
 .vscode*
 .__pycache__/
 venv/
