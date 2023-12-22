@@ -1,4 +1,3 @@
-# FILEPATH: /Users/loujr/toolesbend/test_webapp.py
 import pytest
 from flask_testing import TestCase
 from webapp import app, shortened_urls, generate_short_url
@@ -31,13 +30,13 @@ class TestFlaskApp(TestCase):
         response = self.client.get('/nonexistent')
         self.assert404(response)
 
-    def test_api(self):
-        response = self.client.get('http://api.toolesbend.com/v2')
+    def test_api_hello_world(self):
+        response = self.client.get('/v2')
         self.assert200(response)
         assert response.data.decode() == "this is api \n"
 
     def test_api_ip_endpoint(self):
-        response = self.client.get('http://api.toolesbend.com/v2/ip')
+        response = self.client.get('/v2/ip')
         self.assert200(response)
         assert 'origin' in response.json
 
