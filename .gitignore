@@ -1,12 +1,15 @@
 .bash_history
 .env
+.gitconfig
 .cache/
 .dotnet/
 .ssh/
 .local/
 .pytest_cache/
 .vscode*
+.wget-hsts
 .__pycache__/
+__pycache__
 venv/
 webapp.sock
 urls.json
