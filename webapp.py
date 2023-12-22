@@ -1,16 +1,13 @@
-import random 
-import string
-import json
+from flask import Flask, request, redirect, render_template, jsonify, url_for
 import os
-from flask import Flask, jsonify, request, render_template, send_from_directory, url_for, request, redirect
-from flask_restful import Resource, Api
+import json
+import random
+import string
+from flask_restful import Api
 
-
-
-
-### creating the flask app
 app = Flask(__name__, subdomain_matching=True)
-app.config["SERVER_NAME"] = os.getenv("SERVER_NAME", "default.com")
+app.config['SERVER_NAME'] = os.getenv("SERVER_NAME")
+app.config['APIENDPOINT'] = os.getenv("APIENDPOINT")
 api = Api(app)
 shortened_urls = {}
 
@@ -28,13 +25,10 @@ def index():
     if request.method == "POST":
         long_url = request.form['long_url']
         short_url = generate_short_url()
-        while short_url in shortened_urls:
-            short_url = generate_short_url()
-
         shortened_urls[short_url] = long_url
         with open("urls.json", "w") as f:
             json.dump(shortened_urls, f)
-        return f"Shortened URL: {request.url_root}{short_url}"
+        return f"Shortened URL: {url_for('redirect_url', short_url=short_url, _external=True)}"
     else:
         return render_template("index.html")
 
@@ -48,17 +42,16 @@ def redirect_url(short_url):
 
 ### API ENDPOINTS
 
-@app.route("/v2", subdomain="api")
-def api():
+APIENDPOINT = ['GET', 'POST']
+
+@app.route("/v2", methods=APIENDPOINT)
+def api_hello_world():
     return "this is api \n"
 
-
-@app.route("/v2/ip", subdomain="api")
+@app.route("/v2/ip", methods=APIENDPOINT)
 def api_ip_endpoint():
-    return jsonify(origin=request.headers.get("X-Forwarded-For", 
-    request.remote_addr))
-
+    return jsonify(origin=request.headers.get("X-Forwarded-For", request.remote_addr))
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0")
+    app.run(host="localhost")
 
