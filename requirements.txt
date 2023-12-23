@@ -25,8 +25,6 @@ pyparted==3.11.7
 pyrsistent==0.18.1
 pyserial==3.5
 pytest==7.4.3
-python-apt==2.4.0+ubuntu2
-python-debian==0.1.43+ubuntu1.1
 python-decouple==3.8
 python-dotenv==1.0.0
 python-magic==0.4.24
