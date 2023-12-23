@@ -11,5 +11,6 @@
 .__pycache__/
 __pycache__
 venv/
+.vim*
 webapp.sock
 urls.json
