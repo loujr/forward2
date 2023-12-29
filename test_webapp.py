@@ -1,6 +1,7 @@
 import pytest
 from flask_testing import TestCase
 from webapp import app, shortened_urls, generate_short_url
+import re
 
 class TestFlaskApp(TestCase):
     def create_app(self):
@@ -11,13 +12,18 @@ class TestFlaskApp(TestCase):
         response = self.client.get('/')
         self.assert200(response)
         self.assert_template_used('index.html')
-
+    
     def test_index_post(self):
         long_url = 'https://www.example.com'
         response = self.client.post('/', data={'long_url': long_url})
         self.assert200(response)
-        short_url = response.data.decode().split('/')[-1]
-        assert shortened_urls[short_url] == long_url
+        html_string = response.data.decode()
+        match = re.search(r'href="([^"]*)"', html_string)
+        if match:
+            short_url = match.group(1).split('/')[-1]
+            assert shortened_urls[short_url] == long_url
+        else:
+            assert False, "URL not found in the response"
 
     def test_redirect_url(self):
         long_url = 'https://www.example.com'
