@@ -3,12 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <title>URL Shortener</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        #content {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        input, button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #333;
+            color: #fff;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-    <h1>URL Shortener</h1>
-    <form method="POST" action="{{ url_for('index') }}">
-        <input type="text" name="long_url" placeholder="Enter the long URL">
-        <button type="submit">Shorten</button>
-    </form>
+    <div id="content">
+        <h1>URL Shortener</h1>
+        <form method="POST" action="{{ url_for('index') }}">
+            <input type="text" name="long_url" placeholder="Enter the long URL">
+            <button type="submit">Shorten</button>
+        </form>
+    </div>
 </body>
 </html>
