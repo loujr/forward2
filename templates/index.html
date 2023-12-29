@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>URL Shortener</title>
     <style>
         body {
@@ -16,6 +17,7 @@
             top: 20px;
             left: 20px;
             display: flex;
+            flex-direction: row;
             align-items: center;
             gap: 20px;
         }
@@ -33,6 +35,13 @@
             background-color: #333;
             color: #fff;
             cursor: pointer;
+        }
+        @media (max-width: 600px) {
+            #content {
+                position: static;
+                flex-direction: column;
+                padding: 20px;
+            }
         }
     </style>
 </head>

@@ -13,7 +13,11 @@ shortened_urls = {}
 
 if os.path.exists("urls.json"):  # Check if the file exists
     with open("urls.json", 'r') as f:
-        shortened_urls = json.load(f)  # Load data from file
+        if f.read().strip():  # Check if the file is not empty
+            f.seek(0)  # Reset the file pointer to the beginning
+            shortened_urls = json.load(f)  # Load data from file
+        else:
+            shortened_urls = {}
 
 def generate_short_url(length=6):
     chars = string.ascii_letters + string.digits 
