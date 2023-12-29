@@ -24,7 +24,7 @@
             border: 1px solid #333;
             border-radius: 5px;
         }
-        #copy_button {
+        #copy_button, #clear_button {
             padding: 10px 20px;
             border: none;
             border-radius: 5px;
@@ -38,7 +38,8 @@
     <div id="content">
         <h1>Shortened URL:</h1>
         <a id="short_url" href="{{ short_url }}">{{ short_url }}</a>
-        <button id="copy_button">Copy</button>
+        <button id="copy_button" style="background-color: #0b57ad;">Copy</button>
+        <button id="clear_button" type="button" onclick="window.location.href='{{ url_for('index') }}'">New URL</button>
     </div>
 
     <script>

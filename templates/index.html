@@ -24,7 +24,12 @@
             border: none;
             border-radius: 5px;
         }
-        button {
+        #shorten_button {
+            background-color: #008000;
+            color: #fff;
+            cursor: pointer;
+        }
+        #clear_button {
             background-color: #333;
             color: #fff;
             cursor: pointer;
@@ -35,9 +40,16 @@
     <div id="content">
         <h1>URL Shortener</h1>
         <form method="POST" action="{{ url_for('index') }}">
-            <input type="text" name="long_url" placeholder="Enter the long URL">
-            <button type="submit">Shorten</button>
+            <input id="url_input" type="text" name="long_url" placeholder="Enter the long URL">
+            <button id="shorten_button" type="submit">Shorten</button>
+            <button type="button" id="clear_button">Clear</button>
         </form>
     </div>
+
+    <script>
+        document.querySelector('#clear_button').addEventListener('click', function() {
+            document.querySelector('#url_input').value = '';
+        });
+    </script>
 </body>
 </html>
