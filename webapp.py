@@ -28,7 +28,7 @@ def index():
         shortened_urls[short_url] = long_url
         with open("urls.json", "w") as f:
             json.dump(shortened_urls, f)
-        return f"Shortened URL: {url_for('redirect_url', short_url=short_url, _external=True)}"
+        return render_template("short_url.html", short_url=url_for('redirect_url', short_url=short_url, _external=True))
     else:
         return render_template("index.html")
 
