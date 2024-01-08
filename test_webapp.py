@@ -1,12 +1,21 @@
 import pytest
 from flask_testing import TestCase
-from webapp import app, shortened_urls, generate_short_url
+from webapp import app, get_db_connection
 import re
+import sqlite3
 
 class TestFlaskApp(TestCase):
     def create_app(self):
         app.config['TESTING'] = True
         return app
+
+    def setUp(self):
+        self.conn = get_db_connection()
+        self.conn.execute('CREATE TABLE IF NOT EXISTS urls (short_url TEXT, long_url TEXT)')
+
+    def tearDown(self):
+        self.conn.execute('DROP TABLE urls')
+        self.conn.close()
 
     def test_index_get(self):
         response = self.client.get('/')
@@ -21,14 +30,16 @@ class TestFlaskApp(TestCase):
         match = re.search(r'href="([^"]*)"', html_string)
         if match:
             short_url = match.group(1).split('/')[-1]
-            assert shortened_urls[short_url] == long_url
+            url_data = self.conn.execute('SELECT long_url FROM urls WHERE short_url = ?', (short_url,)).fetchone()
+            assert url_data['long_url'] == long_url
         else:
             assert False, "URL not found in the response"
 
     def test_redirect_url(self):
         long_url = 'https://www.example.com'
-        short_url = generate_short_url()
-        shortened_urls[short_url] = long_url
+        short_url = 'test_short_url'
+        self.conn.execute('INSERT INTO urls (short_url, long_url) VALUES (?, ?)', (short_url, long_url))
+        self.conn.commit()
         response = self.client.get(f'/{short_url}')
         self.assertRedirects(response, long_url)
 
