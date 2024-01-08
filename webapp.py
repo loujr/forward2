@@ -74,6 +74,7 @@ def api_hello_world():
 def api_ip_endpoint():
     return jsonify(origin=request.headers.get("X-Forwarded-For", request.remote_addr))
 
+create_table()
+
 if __name__ == "__main__":
-    create_table()
-    app.run(debug=True)
+    app.run()
