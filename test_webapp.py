@@ -31,6 +31,7 @@ class TestFlaskApp(TestCase):
         if match:
             short_url = match.group(1).split('/')[-1]
             url_data = self.conn.execute('SELECT long_url FROM urls WHERE short_url = ?', (short_url,)).fetchone()
+            assert url_data is not None, "No data found in the database for the given short_url"
             assert url_data['long_url'] == long_url
         else:
             assert False, "URL not found in the response"
