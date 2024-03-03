@@ -1,4 +1,5 @@
 from flask import Flask, request, redirect, render_template, jsonify, url_for
+from flask_caching import Cache
 import os
 import json
 import random
@@ -7,6 +8,7 @@ import sqlite3
 from flask_restful import Api
 
 app = Flask(__name__, subdomain_matching=True)
+cache = Cache()
 app.config['SERVER_NAME'] = os.getenv("SERVER_NAME")
 app.config['APIENDPOINT'] = os.getenv("APIENDPOINT")
 api = Api(app)
@@ -53,6 +55,7 @@ def index():
     else:
         return render_template("index.html")
 
+@cache.cached(timeout=60)
 @app.route("/<short_url>")
 def redirect_url(short_url):
     conn = get_db_connection()
