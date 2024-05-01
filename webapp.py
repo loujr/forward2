@@ -1,5 +1,6 @@
 from flask import Flask, request, redirect, render_template, jsonify, url_for
 from flask_caching import Cache
+from dotenv import load_dotenv
 import os
 import json
 import random
@@ -7,10 +8,12 @@ import string
 import sqlite3
 from flask_restful import Api
 
+load_dotenv()
+
 app = Flask(__name__, subdomain_matching=True)
-cache = Cache()
 app.config['SERVER_NAME'] = os.getenv("SERVER_NAME")
 app.config['APIENDPOINT'] = os.getenv("APIENDPOINT")
+cache = Cache()
 api = Api(app)
 shortened_urls = {}
 
@@ -41,19 +44,21 @@ def generate_short_url(length=6):
     short_url = "".join(random.choice(chars) for _ in range(length))
     return short_url
 
-@app.route("/", methods=["GET", "POST"])
-def index():
+
+@app.route('/shorten_url', methods=['POST'])
+def shorten_url():
+    data = request.get_json()
+    long_url = data['long_url']
+    short_url = generate_short_url()
     conn = get_db_connection()
-    if request.method == "POST":
-        long_url = request.form['long_url']
-        short_url = generate_short_url()
-        conn.execute('INSERT INTO urls (short_url, long_url) VALUES (?, ?)',
-                     (short_url, long_url))
-        conn.commit()
-        conn.close()
-        return render_template("short_url.html", short_url=url_for('redirect_url', short_url=short_url, _external=True))
-    else:
-        return render_template("index.html")
+    conn.execute('INSERT INTO urls (short_url, long_url) VALUES (?, ?)',
+                 (short_url, long_url))
+    conn.commit()
+    conn.close()
+    return jsonify(short_url=url_for('redirect_url', short_url=short_url, _external=True, _scheme='https'))
+
+#curl -X POST -H "Content-Type: application/json" -d '{"long_url":"http://youtube.com"}' https://api.fwd2.app/shorten_url
+#{"short_url":"https://localhost/3lupAP"}
 
 @cache.cached(timeout=60)
 @app.route("/<short_url>")

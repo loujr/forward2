@@ -18,3 +18,4 @@ urls.db
 .profile
 .bashrc
 .bash*
+.sqlite_history
