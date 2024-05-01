@@ -70,6 +70,9 @@ def redirect_url(short_url):
     else:
         return redirect(url_data['long_url'], code=302)
 
+#curl -X GET -H "Content-Type: application/json" -d '{"slug":"3lupAP"}' https://api.fwd2.app
+#{"long_url":"http://youtube.com"}
+
 ### API ENDPOINTS
 
 APIENDPOINT = ['GET', 'POST']
