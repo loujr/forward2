@@ -16,16 +16,14 @@ app = Flask(__name__, subdomain_matching=True)
 
 # Initialize the cache
 cache = Cache()
-# Initialize the API
-api = Api(app)
+
 # Dictionary to store the shortened URLs
 shortened_urls = {}
 
-#Get a connection to the database
-def get_db_connection():
-    conn = sqlite3.connect('urls.db')
-    conn.row_factory = sqlite3.Row
-    return conn
+# Home page for website
+@app.route('/')
+def home():
+    return render_template('index.html')
 
 # Create a table in the database to store the shortened URLs
 def create_table():
@@ -46,12 +44,11 @@ def create_table():
         conn.close()
 
 
-# Generate a short URL
-def generate_short_url(length=6):
-    chars = string.ascii_letters + string.digits 
-    short_url = "".join(random.choice(chars) for _ in range(length))
-    return short_url
-
+# Get a connection to the database
+def get_db_connection():
+    conn = sqlite3.connect('urls.db')
+    conn.row_factory = sqlite3.Row
+    return conn
 
 # Route to redirect the short URL to the original URL
 @cache.cached(timeout=60)
@@ -64,6 +61,7 @@ def redirect_url(short_url):
     else:
         return redirect(url_data['long_url'], code=302)
     
+create_table()
 
 if __name__ == "__main__":
     app.run()
