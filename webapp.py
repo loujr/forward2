@@ -8,15 +8,24 @@ import string
 import sqlite3
 from flask_restful import Api
 
+# Load environment variables from a .env file
 load_dotenv()
 
+# Initialize Flask app with subdomain matching enabled
 app = Flask(__name__, subdomain_matching=True)
-app.config['SERVER_NAME'] = os.getenv("SERVER_NAME")
-app.config['APIENDPOINT'] = os.getenv("APIENDPOINT")
+
+# Set the server name and API endpoint from environment variables
+#app.config['SERVER_NAME'] = os.getenv("SERVER_NAME")
+#app.config['APIENDPOINT'] = os.getenv("APIENDPOINT")
+
+# Initialize the cache
 cache = Cache()
+# Initialize the API
 api = Api(app)
+# Dictionary to store the shortened URLs
 shortened_urls = {}
 
+# Create a table in the database to store the shortened URLs
 def create_table():
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -34,17 +43,19 @@ def create_table():
     finally:
         conn.close()
 
+# Get a connection to the database
 def get_db_connection():
     conn = sqlite3.connect('urls.db')
     conn.row_factory = sqlite3.Row
     return conn
 
+# Generate a short URL
 def generate_short_url(length=6):
     chars = string.ascii_letters + string.digits 
     short_url = "".join(random.choice(chars) for _ in range(length))
     return short_url
 
-
+# Route to the home page
 @app.route('/shorten_url', methods=['POST'])
 def shorten_url():
     data = request.get_json()
@@ -60,6 +71,7 @@ def shorten_url():
 #curl -X POST -H "Content-Type: application/json" -d '{"long_url":"http://youtube.com"}' https://api.fwd2.app/shorten_url
 #{"short_url":"https://localhost/3lupAP"}
 
+# Route to redirect the short URL to the original URL
 @cache.cached(timeout=60)
 @app.route("/<short_url>")
 def redirect_url(short_url):
@@ -70,14 +82,15 @@ def redirect_url(short_url):
     else:
         return redirect(url_data['long_url'], code=302)
 
-### API ENDPOINTS
-
+# Accepted methods for additional API endpoints
 APIENDPOINT = ['GET', 'POST']
 
+# API test endpoint to return a simple message
 @app.route("/v2", methods=APIENDPOINT)
 def api_hello_world():
     return "this is api \n"
 
+# API endpoint to return the IP address of the client
 @app.route("/v2/ip", methods=APIENDPOINT)
 def api_ip_endpoint():
     return jsonify(origin=request.headers.get("X-Forwarded-For", request.remote_addr))
