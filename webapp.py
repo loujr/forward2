@@ -26,22 +26,22 @@ api = Api(app)
 shortened_urls = {}
 
 # Create a table in the database to store the shortened URLs
-#def create_table():
-#    conn = get_db_connection()
-#    cursor = conn.cursor()
-#    try:
-#        cursor.execute(''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name='urls' ''')
-#
-#        # If the count is 1, then table exists
-#        if cursor.fetchone()[0] == 1:
-#            print('Table already exists.')
-#        else:
-#            conn.execute('CREATE TABLE urls (short_url TEXT, long_url TEXT)')
-#            print('Table created successfully.')
-#    except sqlite3.Error as e:
-#        print(f"An error occurred: {e.args[0]}")
-#    finally:
-#        conn.close()
+def create_table():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute(''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name='urls' ''')
+
+        # If the count is 1, then table exists
+        if cursor.fetchone()[0] == 1:
+            print('Table already exists.')
+        else:
+            conn.execute('CREATE TABLE urls (short_url TEXT, long_url TEXT)')
+            print('Table created successfully.')
+    except sqlite3.Error as e:
+        print(f"An error occurred: {e.args[0]}")
+    finally:
+        conn.close()
 
 # Get a connection to the database
 def get_db_connection():
@@ -96,7 +96,7 @@ def api_hello_world():
 def api_ip_endpoint():
     return jsonify(origin=request.headers.get("X-Forwarded-For", request.remote_addr))
 
-#create_table()
+create_table()
 
 if __name__ == "__main__":
     app.run()

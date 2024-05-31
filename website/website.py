@@ -25,30 +25,12 @@ shortened_urls = {}
 def home():
     return render_template('index.html')
 
-# Create a table in the database to store the shortened URLs
-def create_table():
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    try:
-        cursor.execute(''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name='urls' ''')
-
-        # If the count is 1, then table exists
-        if cursor.fetchone()[0] == 1:
-            print('Table already exists.')
-        else:
-            conn.execute('CREATE TABLE urls (short_url TEXT, long_url TEXT)')
-            print('Table created successfully.')
-    except sqlite3.Error as e:
-        print(f"An error occurred: {e.args[0]}")
-    finally:
-        conn.close()
-
-
 # Get a connection to the database
 def get_db_connection():
-    conn = sqlite3.connect('urls.db')
+    conn = sqlite3.connect('/home/fwd2/api/urls.db')
     conn.row_factory = sqlite3.Row
     return conn
+
 
 # Route to redirect the short URL to the original URL
 @cache.cached(timeout=60)
@@ -61,7 +43,6 @@ def redirect_url(short_url):
     else:
         return redirect(url_data['long_url'], code=302)
     
-create_table()
 
 if __name__ == "__main__":
     app.run()
