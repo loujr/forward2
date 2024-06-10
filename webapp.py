@@ -59,11 +59,18 @@ def shorten_url():
     data = request.get_json()
     long_url = data['long_url']
     short_url = generate_short_url()
+    save_url_to_database(short_url, long_url)
+    response = prepare_response(short_url)
+    return response
+
+def save_url_to_database(short_url, long_url):
     conn = get_db_connection()
     conn.execute('INSERT INTO urls (short_url, long_url) VALUES (?, ?)',
                  (short_url, long_url))
     conn.commit()
     conn.close()
+
+def prepare_response(short_url):
     return jsonify(short_url=os.getenv('REDIRECT_URL') + short_url)
 
 #curl -X POST -H "Content-Type: application/json" -d '{"long_url":"http://youtube.com"}' https://api.fwd2.app/shorten_url
