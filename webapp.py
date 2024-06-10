@@ -7,6 +7,8 @@ import random
 import string
 import sqlite3
 from flask_restful import Api
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.pool import QueuePool
 
 # Load environment variables from a .env file
 load_dotenv()
@@ -29,7 +31,6 @@ def create_table():
     cursor = conn.cursor()
     try:
         cursor.execute("SELECT count(name) FROM sqlite_master WHERE type='table' AND name=?", ('urls',))
-
         # If the count is 1, then table exists
         if cursor.fetchone()[0] == 1:
             print('Table already exists.')
@@ -53,17 +54,39 @@ def generate_short_url(length=6):
     short_url = "".join(random.choice(chars) for _ in range(length))
     return short_url
 
+# Create a connection pool
+pool = QueuePool(get_db_connection, max_overflow=10, pool_size=5)
+
+# Initialize Flask app with subdomain matching enabled
+app = Flask(__name__, subdomain_matching=True)
+
+# Set up the database
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///urls.db'
+app.config['SQLALCHEMY_POOL_SIZE'] = 5
+app.config['SQLALCHEMY_POOL_RECYCLE'] = 300
+
+# Initialize the database
+db = SQLAlchemy(app, session_options={'pool': pool})
+
+# Define the URL model
+class URL(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    short_url = db.Column(db.String(255), unique=True)
+    long_url = db.Column(db.String(255))
+
+    def __init__(self, short_url, long_url):
+        self.short_url = short_url
+        self.long_url = long_url
+
 # Route to shorten a URL
 @app.route('/shorten_url', methods=['POST'])
 def shorten_url():
     data = request.get_json()
     long_url = data['long_url']
     short_url = generate_short_url()
-    conn = get_db_connection()
-    conn.execute('INSERT INTO urls (short_url, long_url) VALUES (?, ?)',
-                 (short_url, long_url))
-    conn.commit()
-    conn.close()
+    url = URL(short_url=short_url, long_url=long_url)
+    db.session.add(url)
+    db.session.commit()
     return jsonify(short_url=os.getenv('REDIRECT_URL') + short_url)
 
 #curl -X POST -H "Content-Type: application/json" -d '{"long_url":"http://youtube.com"}' https://api.fwd2.app/shorten_url
