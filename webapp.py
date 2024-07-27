@@ -63,12 +63,18 @@ def shorten_url():
     response = prepare_response(short_url)
     return response
 
-def save_url_to_database(short_url, long_url):
+
+# example of a default parameter, required arguments must go at the beginning of the argument list
+def save_url_to_database(long_url, short_url="default"):
     conn = get_db_connection()
     conn.execute('INSERT INTO urls (short_url, long_url) VALUES (?, ?)',
                  (short_url, long_url))
     conn.commit()
     conn.close()
+
+
+# save_url_to_database(long_url="long_url") - example of using name parameters
+
 
 def prepare_response(short_url):
     return jsonify(short_url=os.getenv('REDIRECT_URL') + short_url)
