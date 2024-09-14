@@ -68,13 +68,24 @@ sudo systemctl start ui.service
 
 Webapp.py will create a websocket called `fwd2.sock` and a database file `urls.db`. This is a key value pair containing a six letter string and the origional URL eg. `('QrEFYy':'example.com')`. This is pair is read from `website.py` and then the user is redirected to the origional URL.
 
+## Using the application
+
+To use the application you can use the following curl commands. 
+
+```
+#curl -X POST -H "Content-Type: application/json" -d '{"long_url":"http://youtube.com"}' https://api.example.com/shorten_url
+
+#{"short_url":"https://example.com/4lupBP"}    
+```
+
+
 
 ## Testing
 
-To test the application you can use the following curl commands. 
+To test the application you can use the following commands. 
 
 ``` 
-test_webapp.py
+python3 test_webapp.py
 ```
 
 This is a series of unit tests that test the API endpoints and verify that the correct response is returned. 
