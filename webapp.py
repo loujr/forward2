@@ -73,8 +73,8 @@ def save_url_to_database(short_url, long_url):
 def prepare_response(short_url):
     return jsonify(short_url=os.getenv('REDIRECT_URL') + short_url)
 
-#curl -X POST -H "Content-Type: application/json" -d '{"long_url":"http://youtube.com"}' https://api.fwd2.app/shorten_url
-#{"short_url":"https://fwd2.app/3lupAP"}
+#curl -X POST -H "Content-Type: application/json" -d '{"long_url":"http://youtube.com"}' https://api.example.com/shorten_url
+#{"short_url":"https://example.com/4lupBP"}
 
 # Accepted methods for additional API endpoints
 APIENDPOINT = ['GET', 'POST']
